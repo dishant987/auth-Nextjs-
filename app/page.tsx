@@ -1,101 +1,177 @@
-import Image from "next/image";
+"use client";
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  LockIcon,
+  ShieldIcon,
+  KeyIcon,
+  UserIcon,
+  EyeIcon,
+  RefreshCcwIcon,
+  ZapIcon,
+} from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const plugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [securityLevel, setSecurityLevel] = React.useState(98);
+  const [encryptionStrength, setEncryptionStrength] = React.useState(85);
+  const [userSatisfaction, setUserSatisfaction] = React.useState(95);
+
+  const handleSliderChange = (
+    value: number[],
+    setValue: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    setValue(value[0]);
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-600 via-blue-200 to-gray-400 p-4">
+      <div className="w-full max-w-lg space-y-8 rounded-xl bg-white p-6 text-center shadow-xl sm:p-8">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600">Our Auth Services</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <Carousel
+          plugins={[plugin.current]}
+          className="w-full max-w-xs mx-auto"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <CarouselContent>
+            {[
+              {
+                icon: ShieldIcon,
+                title: "Security",
+                description: "Top-notch protection",
+              },
+              {
+                icon: KeyIcon,
+                title: "Encryption",
+                description: "256-bit encryption",
+              },
+              {
+                icon: UserIcon,
+                title: "User-Friendly",
+                description: "Easy to use",
+              },
+              {
+                icon: EyeIcon,
+                title: "Privacy",
+                description: "Your data is safe",
+              },
+              {
+                icon: RefreshCcwIcon,
+                title: "Multi-Factor",
+                description: "Extra layer of security",
+              },
+              {
+                icon: ZapIcon,
+                title: "Fast",
+                description: "Quick authentication",
+              },
+            ].map((item, index) => (
+              <CarouselItem key={index}>
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center p-6">
+                      <item.icon className="h-12 w-12 mb-4 text-primary" />
+                      <h3 className="font-semibold text-lg mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+
+        <div className="space-y-6">
+          {/* Security Level Slider */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700 flex items-center">
+                <ShieldIcon className="w-4 h-4 mr-2" />
+                Security Level
+              </label>
+              <span className="text-sm text-gray-500">{securityLevel}%</span>
+            </div>
+            <Slider
+              value={[securityLevel]}
+              max={100}
+              step={1}
+              onValueChange={(value) =>
+                handleSliderChange(value, setSecurityLevel)
+              }
+            />
+          </div>
+
+          {/* Encryption Strength Slider */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700 flex items-center">
+                <KeyIcon className="w-4 h-4 mr-2" />
+                Encryption Strength
+              </label>
+              <span className="text-sm text-gray-500">
+                {encryptionStrength}%
+              </span>
+            </div>
+            <Slider
+              value={[encryptionStrength]}
+              max={100}
+              step={1}
+              onValueChange={(value) =>
+                handleSliderChange(value, setEncryptionStrength)
+              }
+            />
+          </div>
+
+          {/* User Satisfaction Slider */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700 flex items-center">
+                <UserIcon className="w-4 h-4 mr-2" />
+                User Satisfaction
+              </label>
+              <span className="text-sm text-gray-500">{userSatisfaction}%</span>
+            </div>
+            <Slider
+              value={[userSatisfaction]}
+              max={100}
+              step={1}
+              onValueChange={(value) =>
+                handleSliderChange(value, setUserSatisfaction)
+              }
+            />
+          </div>
+        </div>
+
+        <Button className="w-full text-lg" size="lg">
+          <LockIcon className="mr-2 h-5 w-5" />
+          <Link href="/auth/login">Get Started</Link>
+        </Button>
+      </div>
     </div>
   );
 }
