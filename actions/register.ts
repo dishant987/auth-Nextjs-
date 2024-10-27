@@ -3,6 +3,8 @@ import { registerSchema } from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+import { genrateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const register = async (values: z.infer<typeof registerSchema>) => {
   const validated = registerSchema.safeParse(values);
@@ -30,9 +32,10 @@ export const register = async (values: z.infer<typeof registerSchema>) => {
         password: hashedPassword,
       },
     });
-    console.log(newUser);
-
-    return { success: "Registered successfully" };
+    // console.log(newUser);
+    const verificationToken = await genrateVerificationToken(email);
+    await sendVerificationEmail(email, verificationToken.token);
+    return { success: "Confrmation email sent!" };
   } catch (error) {
     // Handle any errors that occur during user creation
     console.error("Error creating user:", error);

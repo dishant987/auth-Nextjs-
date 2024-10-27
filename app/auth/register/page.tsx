@@ -51,17 +51,15 @@ export default function LoginPage() {
   });
 
   function onSubmit(values: z.infer<typeof registerSchema>) {
- 
     startTransition(() => {
       register(values).then((data) => {
         setError(data?.error || null);
         setSuccess(data?.success || null);
-        if(data.success){
+        if (data.success) {
           form.reset();
         }
       });
     });
-  
   }
 
   return (

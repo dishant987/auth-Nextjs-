@@ -12,13 +12,36 @@ declare module "next-auth" {
   }
 }
 
-export const {
-  handlers,
-  signIn,
-  signOut,
-  auth,
-} = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: {
+          emailVerified: new Date(),
+        },
+      });
+    },
+  },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        return true;
+      }
+      const existingUser = await db.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      });
+      if (!existingUser?.emailVerified) {
+        return false;
+      }
+      return true;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;

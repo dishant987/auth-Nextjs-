@@ -36,10 +36,17 @@ import { FcGoogle } from "react-icons/fc";
 import { login } from "@/actions/login";
 import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { useSearchParams } from "next/navigation";
+import FormError from "@/components/form-error";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with another account"
+      : "";
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -57,9 +64,12 @@ export default function LoginPage() {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
+    setError(null);
+    setSuccess(null);
     // Here you would typically send the login request to your server
     startTransition(() => {
       login(values).then((data) => {
+        
         setError(data?.error || null);
         setSuccess(data?.success || null);
       });
@@ -126,13 +136,9 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-
-              {error && (
-                <p className="flex items-center text-red-500 bg-red-50 rounded-lg p-2 gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  {error}
-                </p>
-              )}
+              {error || urlError ? (
+                <FormError message={error || urlError} />
+              ) : null}
 
               {success && (
                 <p className="flex items-center text-green-500 bg-green-50 rounded-lg p-2  gap-2">

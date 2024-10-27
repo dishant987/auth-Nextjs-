@@ -18,8 +18,6 @@ export default {
     }),
     Credentials({
       authorize: async (credentials) => {
-       
-       
         const validated = loginSchema.safeParse(credentials);
         if (validated.success) {
           const { email, password } = validated.data;
@@ -30,7 +28,9 @@ export default {
             },
           });
           if (!user || !user.password) {
-            return null;
+            return {
+              error: "User not found",
+            };
           }
 
           const isValid = await bcrypt.compare(password, user.password);
