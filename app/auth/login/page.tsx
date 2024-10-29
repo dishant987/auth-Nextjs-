@@ -47,6 +47,8 @@ export default function LoginPage() {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with another account"
       : "";
+
+  console.log(urlError);
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -69,7 +71,6 @@ export default function LoginPage() {
     // Here you would typically send the login request to your server
     startTransition(() => {
       login(values).then((data) => {
-        
         setError(data?.error || null);
         setSuccess(data?.success || null);
       });

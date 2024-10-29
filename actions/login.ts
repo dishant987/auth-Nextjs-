@@ -7,6 +7,8 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { genrateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
+import bcrypt from "bcryptjs";
 
 export const login = async (values: z.infer<typeof loginSchema>) => {
   const validated = loginSchema.safeParse(values);
@@ -25,10 +27,18 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "User not found" };
   }
-  console.log("out side verify");
+
+  const valid = await bcrypt.compare(password, existingUser.password);
+
+  if (!valid) {
+    return { error: "Invalid credentials" };
+  }
+
   if (!existingUser.emailVerified) {
-    const token = await genrateVerificationToken(existingUser.email);
-    console.log("inside verify");
+    const verificationToken = await genrateVerificationToken(
+      existingUser.email
+    );
+    await sendVerificationEmail(existingUser.email, verificationToken.token);
     return { success: "Confrmation email sent!" };
   }
   try {
