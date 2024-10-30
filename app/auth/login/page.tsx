@@ -48,7 +48,7 @@ export default function LoginPage() {
       ? "Email already in use with another account"
       : "";
 
-  console.log(urlError);
+
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -77,7 +77,6 @@ export default function LoginPage() {
     });
     // Simulating API call
   }
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-[400px]">
@@ -147,6 +146,14 @@ export default function LoginPage() {
                   {success}
                 </p>
               )}
+              <div className="flex">
+                <Link
+                  href="/auth/reset"
+                  className="text-sm text-muted-foreground hover:underline duration-300"
+                >
+                  Reset password?
+                </Link>
+              </div>
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending && <Loader className="mr-2 h-4 w-4 animate-spin" />}
                 Log in
