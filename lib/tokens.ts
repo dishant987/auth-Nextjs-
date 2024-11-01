@@ -1,6 +1,31 @@
 import { getVerificationTokenByEmail } from "@/data/verification-token";
 import { db } from "./db";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
+
+export const genrateTwoFactorToken = async (email: string) => {
+  const token = crypto.randomInt(100_000, 1_000_000).toString();
+  const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
+  const exisingToken = await getTwoFactorTokenByEmail(email);
+  if (exisingToken) {
+    await db.twoFactorToken.delete({
+      where: {
+        id: exisingToken.id,
+      },
+    });
+  }
+
+  const twoFactorToken = await db.twoFactorToken.create({
+    data: {
+      email,
+      token,
+      expires,
+    },
+  });
+
+  return twoFactorToken;
+};
 
 export const genratePasswordResetToken = async (email: string) => {
   const payload: object = {

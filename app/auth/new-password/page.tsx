@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { CheckCircle, EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -23,33 +23,20 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const passwordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[!@#$%^&*]/,
-        "Password must contain at least one special character (!@#$%^&*)"
-      ),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+import { useSearchParams } from "next/navigation";
+import { passwordSchema } from "@/schemas";
+import { newPassword } from "@/actions/new-password";
+import FormError from "@/components/form-error";
 
 export default function NewPasswordPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
+  const serachParams = useSearchParams();
+  const token = serachParams.get("token");
 
   const form = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -61,18 +48,24 @@ export default function NewPasswordPage() {
 
   async function onSubmit(values: z.infer<typeof passwordSchema>) {
     console.log(values);
-    setError(null);
-    setSuccess(null);
+    setError(undefined);
+    setSuccess(undefined);
     // Here you would typically send the login request to your server
     startTransition(() => {
       // Simulating API call
-      console.log("Submitting: ", values);
-      setSuccess("Password has been updated successfully!");
+      newPassword(values, token || "")
+        .then((data) => {
+          setError(data?.error);
+          setSuccess(data?.success);
+        })
+        .catch(() => {
+          setError("Something went wrong. Please try again later");
+        });
     });
   }
 
   return (
-    <div>
+    <div className="flex items-center justify-center min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">
@@ -157,11 +150,16 @@ export default function NewPasswordPage() {
                   </FormItem>
                 )}
               />
+              {error && <FormError message={error} />}
+
               {success && (
-                <p className="text-green-500 text-center">{success}</p>
+                <p className="flex items-center text-green-500 bg-green-50 rounded-lg p-2  gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  {success}
+                </p>
               )}
-              {error && <p className="text-red-500 text-center">{error}</p>}
               <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending && <Loader className="mr-2 h-4 w-4 animate-spin" />}
                 Set New Password
               </Button>
             </form>

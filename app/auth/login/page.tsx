@@ -23,13 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import {
-  EyeIcon,
-  EyeOffIcon,
-  Loader,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import { loginSchema } from "@/schemas";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
@@ -38,16 +32,24 @@ import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { useSearchParams } from "next/navigation";
 import FormError from "@/components/form-error";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [showTwoFactor, setShowTwoFactor] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with another account"
       : "";
-
 
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -68,12 +70,26 @@ export default function LoginPage() {
   function onSubmit(values: z.infer<typeof loginSchema>) {
     setError(null);
     setSuccess(null);
+  
     // Here you would typically send the login request to your server
     startTransition(() => {
-      login(values).then((data) => {
-        setError(data?.error || null);
-        setSuccess(data?.success || null);
-      });
+      login(values)
+        .then((data) => {
+          if (data?.error) {
+            form.reset();
+            setError(data.error);
+          }
+          if (data?.success) {
+            form.reset();
+            setSuccess(data.success);
+          }
+          if (data?.twoFactor) {
+            setShowTwoFactor(true);
+          }
+        })
+        .catch(() => {
+          setError("Something went wrong. Please try again later");
+        });
     });
     // Simulating API call
   }
@@ -89,53 +105,100 @@ export default function LoginPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
+              {showTwoFactor && (
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Two Factor Code</FormLabel>
+                      <FormControl>
+                        <InputOTP
+                          maxLength={6}
+                          pattern={REGEXP_ONLY_DIGITS}
                           {...field}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                          aria-label={
-                            showPassword ? "Hide password" : "Show password"
-                          }
+                          className="justify-center items-center"
                         >
-                          {showPassword ? (
-                            <EyeOffIcon className="h-4 w-4" />
-                          ) : (
-                            <EyeIcon className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                          <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                            <InputOTPSlot index={1} />
+                          </InputOTPGroup>
+                          <InputOTPSeparator />
+                          <InputOTPGroup>
+                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={3} />
+                          </InputOTPGroup>
+                          <InputOTPSeparator />
+                          <InputOTPGroup>
+                            <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
+                          </InputOTPGroup>
+                        </InputOTP>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {!showTwoFactor && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Enter your password"
+                              {...field}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                              onClick={() => setShowPassword(!showPassword)}
+                              aria-label={
+                                showPassword ? "Hide password" : "Show password"
+                              }
+                            >
+                              {showPassword ? (
+                                <EyeOffIcon className="h-4 w-4" />
+                              ) : (
+                                <EyeIcon className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex">
+                    <Link
+                      href="/auth/reset"
+                      className="text-sm text-muted-foreground hover:underline duration-300"
+                    >
+                      Reset password?
+                    </Link>
+                  </div>
+                </>
+              )}
               {error || urlError ? (
                 <FormError message={error || urlError} />
               ) : null}
@@ -146,17 +209,10 @@ export default function LoginPage() {
                   {success}
                 </p>
               )}
-              <div className="flex">
-                <Link
-                  href="/auth/reset"
-                  className="text-sm text-muted-foreground hover:underline duration-300"
-                >
-                  Reset password?
-                </Link>
-              </div>
+
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending && <Loader className="mr-2 h-4 w-4 animate-spin" />}
-                Log in
+                {showTwoFactor ? "Confirm" : "Login"}
               </Button>
             </form>
           </Form>

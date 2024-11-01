@@ -30,6 +30,20 @@ const generateEmailTemplate = (
   `;
 };
 
+// 2FA Email Template
+const generateTwoFactorEmailTemplate = (code: string) => {
+  return `
+    <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+      <h2 style="color: #333;">Your 2-Factor Authentication Code</h2>
+      <p style="color: #555;">Use the code below to complete your login:</p>
+      <p style="color: #777;">This code is valid for 5 minutes. If you did not request this code, please ignore this email.</p>
+      <div style="font-size: 24px; font-weight: bold; color: #007BFF; padding: 15px; background-color: #fff; border-radius: 8px; text-align: center; margin: 20px 0;">
+        ${code}
+      </div>
+    </div>
+  `;
+};
+
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   const resetLink = `http://localhost:3000/auth/new-password?token=${token}`;
   const title = "Reset Your Password";
@@ -62,6 +76,20 @@ export const sendVerificationEmail = async (email: string, token: string) => {
       to: email, // recipient email
       subject: title,
       html: generateEmailTemplate(title, message, confirmLink, actionText),
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
+  const title = "Your 2-Factor Authentication Code";
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER, // sender address
+      to: email, // recipient email
+      subject: title,
+      html: generateTwoFactorEmailTemplate(token),
     });
   } catch (error) {
     console.error("Error sending email:", error);
