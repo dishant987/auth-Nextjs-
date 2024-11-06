@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,6 +53,11 @@ type OtpFormValues = z.infer<typeof otpSchema>;
 export default function SettingsPage() {
   const user = useCurrentUser();
   const { update } = useSession();
+
+  useEffect(() => {
+    update(); // Refreshes session data when the page loads
+  }, [update, user]);
+
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -86,7 +91,6 @@ export default function SettingsPage() {
             setError(data.error);
           }
           if (data?.success) {
-            console.log(data);
             update();
             setSuccess(data.success);
           }
@@ -175,7 +179,7 @@ export default function SettingsPage() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input  className="w-full" {...field} />
+                      <Input className="w-full" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

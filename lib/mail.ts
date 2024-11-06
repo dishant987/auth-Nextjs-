@@ -45,7 +45,7 @@ const generateTwoFactorEmailTemplate = (code: string) => {
 };
 
 export const sendPasswordResetEmail = async (email: string, token: string) => {
-  const resetLink = `http://localhost:3000/auth/new-password?token=${token}`;
+  const resetLink = `${process.env.BASE_URL}/auth/new-password?token=${token}`;
   const title = "Reset Your Password";
   const message =
     "You requested a password reset. Please click the button below to create a new password.";
@@ -64,7 +64,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
 };
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const confirmLink = `http://localhost:3000/auth/new-verification?token=${token}`;
+  const confirmLink = `${process.env.BASE_URL}/auth/new-verification?token=${token}`;
   const title = "Confirm Your Email";
   const message =
     "Thank you for registering! Please confirm your email address by clicking the button below.";
