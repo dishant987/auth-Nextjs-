@@ -12,6 +12,10 @@ declare module "next-auth" {
       role: string;
       isTwoFactorEnabled: boolean;
       isOAuth: boolean;
+      name: string;
+      email: string;
+      id: string;
+      image: string;
     } & DefaultSession["user"];
   }
 }

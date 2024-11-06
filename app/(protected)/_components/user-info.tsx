@@ -1,14 +1,17 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface ExtendedUser {
-  
   isOAuth: boolean;
   isTwoFactorEnabled: boolean;
   role: string;
+  name: string;
+  email: string;
+  id: string;
+  image: string;
 }
 
 interface UserInfoProps {
-  user?: ExtendedUser | undefined;
+  user?: ExtendedUser;
   label: string;
   icon?: React.ReactNode;
 }
