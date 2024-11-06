@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -47,10 +47,13 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [showTwoFactor, setShowTwoFactor] = useState<boolean>(false);
   const searchParams = useSearchParams();
-  const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Email already in use with another account"
-      : "";
+  useEffect(() => {
+    const urlError =
+      searchParams.get("error") === "OAuthAccountNotLinked"
+        ? "Email already in use with another account"
+        : "";
+    setError(urlError);
+  }, [searchParams]);
 
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -98,13 +101,7 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-[400px]">
         <CardHeader className="flex  justify-center items-center">
-          <Image
-            src="/auth.png"
-            alt="Logo"
-            width={80}
-            height={80}
-            
-          />
+          <Image src="/auth.png" alt="Logo" width={80} height={80} />
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
             Welcome back! Please enter your details
@@ -207,9 +204,7 @@ export default function LoginPage() {
                   </div>
                 </>
               )}
-              {error || urlError ? (
-                <FormError message={error || urlError} />
-              ) : null}
+              {error && <FormError message={error} />}
 
               {success && (
                 <p className="flex items-center text-green-500 bg-green-50 rounded-lg p-2  gap-2">
