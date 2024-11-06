@@ -75,9 +75,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as UserRole; // error
       }
       if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean; // error
-      }
-      if (session.user) {
         session.user.image = token.image as string; // error
       }
 

@@ -54,10 +54,6 @@ export default function SettingsPage() {
   const user = useCurrentUser();
   const { update } = useSession();
 
-  useEffect(() => {
-    update(); // Refreshes session data when the page loads
-  }, [update, user]);
-
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -65,7 +61,7 @@ export default function SettingsPage() {
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
 
-  const defaultValues: Partial<SettingsFormValues> = {
+  const defaultValues = {
     name: user?.name || undefined,
     email: user?.email || undefined,
     password: undefined,
