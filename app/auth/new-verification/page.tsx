@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -17,33 +16,29 @@ import { newVerification } from "@/actions/new-verification";
 export default function Verification() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-
-  const [verificationStatus, setVerificationStatus] = useState<
-    "loading" | "success" | "error"
-  >("loading");
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
   const verifyEmail = () => {
     if (!token) {
       setError("Missing token");
-      setVerificationStatus("error");
+   
       return;
     }
 
     newVerification(token)
       .then((data) => {
         if (data?.success) {
-          setVerificationStatus("success");
+         
           setSuccess(data.success || "Email Verified Successfully!");
         }
         if (data?.error) {
-          setVerificationStatus("error");
+        
           setError(data.error || "Verification failed.");
         }
       })
       .catch(() => {
-        setVerificationStatus("error");
+      
         setError("Something went wrong. Please try again later.");
       });
   };
@@ -60,7 +55,7 @@ export default function Verification() {
             Email Verification
           </CardTitle>
           <CardDescription className="text-center">
-            We're verifying your email address
+            We&apos;re verifying your email address
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center p-6">

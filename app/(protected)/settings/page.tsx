@@ -28,7 +28,6 @@ import {
   EyeIcon,
   EyeOffIcon,
   Loader,
-  Loader2,
   Settings,
 } from "lucide-react";
 import { settingSchema } from "@/schemas";
@@ -293,7 +292,7 @@ export default function SettingsPage() {
           <div className="flex items-center space-x-2 p-2">
             <Switch
               id="2fa"
-              checked={is2FAEnabled}
+              checked={user?.isTwoFactorEnabled}
               onCheckedChange={handle2FAToggle}
             />
             <Label htmlFor="2fa">Enable Two-Factor Authentication</Label>

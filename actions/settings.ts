@@ -6,12 +6,10 @@ import { sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/mail";
 import { genrateTwoFactorToken, genrateVerificationToken } from "@/lib/tokens";
 import { settingSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
-import { useSession } from "next-auth/react";
+
 import * as z from "zod";
 
 export async function updateSettings(data: z.infer<typeof settingSchema>) {
-  const { update } = useSession();
-
   const user = await currentUser();
   if (!user) {
     return { error: "Unauthorized" };
@@ -75,13 +73,6 @@ export async function updateSettings(data: z.infer<typeof settingSchema>) {
     },
   });
 
-  update({
-    user: {
-      name: updatedUser.name,
-      email: updatedUser.email,
-    },
-  });
-
   return {
     success: "Settings updated",
   };
@@ -92,7 +83,6 @@ export async function fa(
   email: string,
   isTwoFactorEnabled: boolean
 ) {
-  const { update } = useSession();
   const user = await db.user.findUnique({
     where: {
       email,
@@ -125,12 +115,6 @@ export async function fa(
       id: user.id,
     },
     data: {
-      isTwoFactorEnabled: !isTwoFactorEnabled,
-    },
-  });
-
-  update({
-    user: {
       isTwoFactorEnabled: !isTwoFactorEnabled,
     },
   });
