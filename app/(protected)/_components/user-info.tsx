@@ -1,6 +1,13 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ExtendedUser } from "@/next-auth";
-import { Server } from "lucide-react";
+
+interface ExtendedUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  isTwoFactorEnabled: boolean;
+  role: "ADMIN" | "USER";
+}
 
 interface UserInfoProps {
   user?: ExtendedUser;
