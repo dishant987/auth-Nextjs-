@@ -53,9 +53,6 @@ type OtpFormValues = z.infer<typeof otpSchema>;
 export default function SettingsPage() {
   const user = useCurrentUser();
   const { update } = useSession();
-  const [is2FAEnabled, setIs2FAEnabled] = useState<boolean | undefined>(
-    user?.isTwoFactorEnabled
-  );
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -137,7 +134,7 @@ export default function SettingsPage() {
     setShowOtpModal(false);
   }
 
-  function handle2FAToggle(checked: boolean) {
+  function handle2FAToggle() {
     startTransition(() => {
       sendEmailFor2FA(user?.email as string).then((data) => {
         if (data?.error) {
