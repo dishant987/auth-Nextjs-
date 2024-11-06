@@ -28,16 +28,15 @@ export default {
             },
           });
           if (!user || !user.password) {
-            return {
-              error: "User not found",
-            };
+            return null;
           }
 
           const isValid = await bcrypt.compare(password, user.password);
           if (isValid) {
             return user;
           }
-
+          return null;
+        } else {
           return null;
         }
       },
