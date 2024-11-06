@@ -8,7 +8,7 @@ const page = async () => {
   return (
     <UserInfo
       user={session?.user}
-      label=" Server Component"
+      label="Server Component"
       icon={<Server className="h-6 w-6" />}
     />
   );
