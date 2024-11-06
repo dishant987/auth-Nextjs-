@@ -34,6 +34,7 @@ import { registerSchema } from "@/schemas";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { register } from "@/actions/register";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -65,9 +66,10 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-[400px]">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Register</CardTitle>
-          <CardDescription className="text-center">
+        <CardHeader className="flex  justify-center items-center">
+          <Image src="/auth.png" alt="Logo" width={80} height={80} />
+          <CardTitle className="text-2xl ">Register</CardTitle>
+          <CardDescription >
             Welcome back! Please enter your details
           </CardDescription>
         </CardHeader>

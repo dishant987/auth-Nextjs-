@@ -4,12 +4,14 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./lib/db";
 import { UserRole } from "@prisma/client";
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
+import { getAccountByUserId } from "./data/account";
 
 declare module "next-auth" {
   interface Session {
     user: {
       role: string;
       isTwoFactorEnabled: boolean;
+      isOAuth: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -31,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log(account);
+    
       if (account?.provider !== "credentials") {
         return true;
       }
@@ -61,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async session({ session, token }) {
-      console.log(token);
+    
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -73,6 +75,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       if (session.user) {
         session.user.image = token.image as string; // error
+      }
+
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email as string;
+        session.user.isOAuth = token.isOAuth as boolean;
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       }
       return session;
     },
@@ -90,6 +99,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!existingUser) {
         return token;
       }
+      const existingAccount = await getAccountByUserId(existingUser.id);
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.image = existingUser.image;

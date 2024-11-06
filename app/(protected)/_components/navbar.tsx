@@ -15,6 +15,7 @@ import { Bell, LogOut, Menu, User, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [activeLink, setActiveLink] = useState("settings");
@@ -36,7 +37,13 @@ export default function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-8">
           <Link href="#" className="text-2xl font-bold">
-            Logo
+            <Image
+              src="/auth.png"
+              alt="Logo"
+              width={50}
+              height={50}
+            
+            />
           </Link>
           <ul className="hidden md:flex gap-8 justify-center items-center">
             {navItems.map((item) => (

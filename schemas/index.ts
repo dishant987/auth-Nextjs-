@@ -1,26 +1,74 @@
 import * as z from "zod";
 
-export const settingSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  currentPassword: z.string().min(1, {
-    message: "Password must be at least 1 characters.",
-  }),
-  newPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters long")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number")
-    .regex(
-      /[!@#$%^&*]/,
-      "Password must contain at least one special character (!@#$%^&*)"
-    ),
-});
+export const settingSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, {
+        message: "Name must be at least 2 characters.",
+      })
+      .optional(),
+    email: z
+      .string()
+      .email({
+        message: "Please enter a valid email address.",
+      })
+      .optional(),
+    password: z
+      .string()
+      .min(1, {
+        message: "Password must be at least 1 character.",
+      })
+      .optional(),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[!@#$%^&*]/,
+        "Password must contain at least one special character (!@#$%^&*)"
+      )
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      return (
+        !data.password ||
+        !data.newPassword ||
+        data.password !== data.newPassword
+      );
+    },
+    {
+      message: "New password must be different from current password.",
+      path: ["newPassword"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.password && !data.newPassword) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "New password is required",
+      path: ["newPassword"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!data.password && data.newPassword) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Current password is required",
+      path: ["currentPassword"],
+    }
+  );
 
 export const ResetSchema = z.object({
   email: z

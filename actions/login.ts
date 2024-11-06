@@ -52,7 +52,7 @@ export const login = async (values: z.infer<typeof loginSchema>) => {
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
     if (code) {
       const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
-      console.log(twoFactorToken);
+      
       if (!twoFactorToken) {
         return { error: "Invalid code!" };
       }

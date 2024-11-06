@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { EyeIcon, EyeOffIcon, Loader } from "lucide-react";
+import { CheckCircle, EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import { loginSchema } from "@/schemas";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
@@ -40,6 +40,7 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from "@/components/ui/input-otp";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -70,7 +71,7 @@ export default function LoginPage() {
   function onSubmit(values: z.infer<typeof loginSchema>) {
     setError(null);
     setSuccess(null);
-  
+
     // Here you would typically send the login request to your server
     startTransition(() => {
       login(values)
@@ -96,9 +97,16 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-[400px]">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-          <CardDescription className="text-center">
+        <CardHeader className="flex  justify-center items-center">
+          <Image
+            src="/auth.png"
+            alt="Logo"
+            width={80}
+            height={80}
+            
+          />
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>
             Welcome back! Please enter your details
           </CardDescription>
         </CardHeader>
