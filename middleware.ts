@@ -16,14 +16,14 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   if (isApiAuthRoute) {
-    return null;
+    return void 0;
   }
 
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
-    return null;
+    return void 0;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
@@ -37,8 +37,7 @@ export default auth((req) => {
       new URL(`/auth/login?${encodedCallbackUrl}`, nextUrl)
     );
   }
-
-  return null;
+  return void 0;
 });
 
 export const config = {
