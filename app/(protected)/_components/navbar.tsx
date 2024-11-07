@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, LogOut, Menu, User, X } from "lucide-react";
+import { Bell, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
@@ -37,13 +37,7 @@ export default function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-8">
           <Link href="#" className="text-2xl font-bold">
-            <Image
-              src="/auth.png"
-              alt="Logo"
-              width={50}
-              height={50}
-            
-            />
+            <Image src="/auth.png" alt="Logo" width={50} height={50} />
           </Link>
           <ul className="hidden md:flex gap-8 justify-center items-center">
             {navItems.map((item) => (
@@ -108,11 +102,6 @@ export default function Navbar() {
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer" onClick={onClick}>
                 <LogOut className="mr-2 h-4 w-4" />

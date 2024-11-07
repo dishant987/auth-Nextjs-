@@ -35,6 +35,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { fa, sendEmailFor2FA, updateSettings } from "@/actions/settings";
 import { useSession } from "next-auth/react";
 import FormError from "@/components/form-error";
+import UserProfile from "../_components/user-profile";
 
 const otpSchema = z.object({
   otp: z
@@ -160,7 +161,9 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center mb-6">
         <Settings className="mr-2 h-8 w-8" />
         <h1 className="text-3xl font-bold">Settings</h1>
+     
       </div>
+      <UserProfile imgUrl={user?.image} name={user?.name} />
       <div className="space-y-4">
         <Form {...form}>
           <form
