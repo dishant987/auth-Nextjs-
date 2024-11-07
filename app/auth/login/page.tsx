@@ -99,7 +99,7 @@ export default function LoginPage() {
   }
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-[400px]">
+      <Card className="w-[360px] md:w-[400px]">
         <CardHeader className="flex  justify-center items-center">
           <Image src="/auth.png" alt="Logo" width={80} height={80} />
           <CardTitle className="text-2xl">Login</CardTitle>

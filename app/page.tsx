@@ -102,8 +102,8 @@ export default function Home() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="absolute top-1/2 left-4 -translate-y-1/2" />
+          <CarouselNext className="absolute top-1/2 right-4 -translate-y-1/2" />
         </Carousel>
 
         <div className="space-y-6">

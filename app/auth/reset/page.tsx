@@ -57,7 +57,7 @@ export default function ResetPage() {
   }
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-[400px]">
+      <Card className="w-[360px] md:w-[400px]">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Reset Password</CardTitle>
         </CardHeader>
