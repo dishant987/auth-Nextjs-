@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Trash2, Upload } from "lucide-react";
+import { Loader2, Trash2, Upload } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface UserProfileProps {
@@ -16,10 +16,14 @@ interface UserProfileProps {
 export default function UserProfile({ imgUrl, name }: UserProfileProps) {
   const [imageUrl, setImageUrl] = useState(imgUrl || "");
   const [previewUrl, setPreviewUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDeletingLoading, setIsDeletingLoading] = useState(false);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    if (isUploading) return;
+    setIsUploading(true);
     const file = event.target.files?.[0];
     if (!file) return;
     setPreviewUrl(URL.createObjectURL(file));
@@ -56,12 +60,51 @@ export default function UserProfile({ imgUrl, name }: UserProfileProps) {
       console.log(result);
     } catch (error) {
       console.error("Error uploading image:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  const handleDeleteImage = () => {
-    setImageUrl("");
-    setPreviewUrl("");
+  const handleDeleteImage = async () => {
+    if (isDeletingLoading) return;
+    setIsDeletingLoading(true);
+    // Prepare form data to send to backend
+    const formData = new FormData();
+    formData.append("imgUrl", imageUrl);
+
+    try {
+      const response = await fetch("/api/delete-image", {
+        method: "DELETE",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.error) {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+          duration: 4000,
+        });
+        console.error("Error uploading image:", result.error);
+        return;
+      }
+      if (result.success) {
+        setImageUrl("");
+        setPreviewUrl("");
+        toast({
+          title: "Success",
+          description: result.success,
+          variant: "default",
+          duration: 4000,
+        });
+      }
+      console.log(result);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setIsDeletingLoading(false);
+    }
   };
 
   return (
@@ -82,30 +125,34 @@ export default function UserProfile({ imgUrl, name }: UserProfileProps) {
               onChange={handleImageUpload}
               className="hidden"
             />
-            <Button asChild>
-              <Label htmlFor="profile-image" className="cursor-pointer">
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Image
-              </Label>
-            </Button>
+            <Label
+              htmlFor="profile-image"
+              className="cursor-pointer flex items-center space-x-2"
+            >
+              {isUploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-4 w-4" />
+              )}
+              <span>Upload Image</span>
+            </Label>
             {(imageUrl || previewUrl) && (
               <Button
                 variant="destructive"
                 size="icon"
                 onClick={handleDeleteImage}
+                disabled={isUploading}
               >
-                <Trash2 className="h-4 w-4" />
+                {isDeletingLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
               </Button>
             )}
           </div>
         </div>
       </div>
-
-      {previewUrl && !imageUrl && (
-        <div className="mb-4 text-center">
-          <p className="text-sm text-gray-500">Image preview (uploading...)</p>
-        </div>
-      )}
     </div>
   );
 }

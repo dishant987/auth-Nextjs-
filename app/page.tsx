@@ -10,19 +10,13 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  LockIcon,
-  ShieldIcon,
-  KeyIcon,
-  UserIcon,
-  EyeIcon,
-  RefreshCcwIcon,
-  ZapIcon,
-} from "lucide-react";
+import { LockIcon, ShieldIcon, KeyIcon, UserIcon, EyeIcon, RefreshCcwIcon, ZapIcon } from 'lucide-react';
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
+import { HomeSkeleton } from "@/components/home-skeleton";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = React.useState(true);
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
@@ -37,6 +31,19 @@ export default function Home() {
   ) => {
     setValue(value[0]);
   };
+
+  React.useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <HomeSkeleton />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-600 via-blue-200 to-gray-400 p-4">
@@ -175,3 +182,4 @@ export default function Home() {
     </div>
   );
 }
+

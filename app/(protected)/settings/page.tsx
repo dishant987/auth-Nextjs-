@@ -157,11 +157,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6 rounded-lg mx-auto max-h-dvh bg-slate-50 w-[97%]">
+    <div className="p-6 rounded-lg mx-auto  bg-slate-50 w-[97%]">
       <div className="flex items-center justify-center mb-6">
         <Settings className="mr-2 h-8 w-8" />
         <h1 className="text-3xl font-bold">Settings</h1>
-     
       </div>
       <UserProfile imgUrl={user?.image} name={user?.name} />
       <div className="space-y-4">
