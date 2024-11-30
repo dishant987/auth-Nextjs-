@@ -1,5 +1,4 @@
 import React, { ReactNode, Suspense } from "react";
-import { Loader2 } from "lucide-react";
 import { AuthSkeleton } from "@/components/authSkeleton";
 
 const LoginLayout = ({ children }: { children: ReactNode }) => {
